@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
@@ -31,7 +30,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions;
 public class Step2MnistCNN {
 
 	//The absolute path of the folder containing MNIST training and testing subfolders
-	private static final String MNIST_DATASET_ROOT_FOLDER = "/home/vincenzo/dl4j/mnist_png/";
+	private static final String MNIST_DATASET_ROOT_FOLDER = "/home/vincenzo/dev/dev-dl/data/mnist_png/";
 	//Height and widht in pixel of each image
 	private static final int HEIGHT = 28;
 	private static final int WIDTH = 28;
@@ -40,18 +39,12 @@ public class Step2MnistCNN {
 	private static final int N_SAMPLES_TESTING = 10000;
 	//The number of possible outcomes of the network for each input, 
 	//correspondent to the 0..9 digit classification
-	private static final int N_OUTCOMES = 10;
+	private static final int N_OUTCOMES = 10;	
 	
-	//org.deeplearning4j.nn.conf.layers.DenseLayer
-    //org.deeplearning4j.nn.weights.WeightInit
-	//org.deeplearning4j.nn.conf.layers.OutputLayer
-	//org.deeplearning4j.nn.conf.inputs.InputType;
 	public static void main(String[] args) throws IOException {
+		long t0 = System.currentTimeMillis();
 		DataSetIterator dsi = getDataSetIterator(MNIST_DATASET_ROOT_FOLDER + "training", N_SAMPLES_TRAINING);
 		
-		//org.nd4j.linalg.lossfunctions.LossFunctions;
-		//org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
-		//org.deeplearning4j.nn.conf.layers.SubsamplingLayer;
 		int channels = 1;
 		MultiLayerConfiguration conf = new NeuralNetConfiguration.Builder()
                 .seed(123)
@@ -59,20 +52,20 @@ public class Step2MnistCNN {
                 .updater(new Nesterovs(0.006, 0.9))
                 .weightInit(WeightInit.XAVIER)
                 .list()
-                .layer(new ConvolutionLayer.Builder(5, 5)
+                .layer(new ConvolutionLayer.Builder(3, 3)
                     .nIn(channels )
                     .stride(1, 1)
-                    .nOut(20)
-                    .activation(Activation.IDENTITY)
+                    .nOut(50)
+                    .activation(Activation.RELU)
                     .build())
                 .layer(new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                     .kernelSize(2, 2)
                     .stride(2, 2)
                     .build())
-                .layer(new ConvolutionLayer.Builder(5, 5)
+                .layer(new ConvolutionLayer.Builder(3, 3)
                     .stride(1, 1) // nIn need not specified in later layers
                     .nOut(50)
-                    .activation(Activation.IDENTITY)
+                    .activation(Activation.RELU)
                     .build())
                 .layer(new SubsamplingLayer.Builder(SubsamplingLayer.PoolingType.MAX)
                     .kernelSize(2, 2)
@@ -99,6 +92,10 @@ public class Step2MnistCNN {
 		DataSetIterator testDsi = getDataSetIterator( MNIST_DATASET_ROOT_FOLDER + "testing", N_SAMPLES_TESTING);
 		Evaluation eval = model.evaluate(testDsi); //org.nd4j.evaluation.classification.Evaluation;
 		System.out.println(eval); 
+		
+		long t1 = System.currentTimeMillis();
+		double t = (double)(t1 - t0) / 1000.0;
+		System.out.println("\n\nTotal time: "+t+" seconds");
 	}
 
 	private static DataSetIterator getDataSetIterator(String folderPath, int nSamples) throws IOException {

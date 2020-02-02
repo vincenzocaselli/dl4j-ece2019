@@ -28,7 +28,7 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 public class Step1MnistMLP {
 
 	//The absolute path of the folder containing MNIST training and testing subfolders
-	private static final String MNIST_DATASET_ROOT_FOLDER = "/home/vincenzo/dl4j/mnist_png/";
+	private static final String MNIST_DATASET_ROOT_FOLDER = "/home/vincenzo/dev/dev-dl/data/mnist_png/";
 	//Height and widht in pixel of each image
 	private static final int HEIGHT = 28;
 	private static final int WIDTH = 28;
